@@ -64,3 +64,17 @@ func (c Client) Set(k string, v interface{}, ttl time.Duration) error {
 	astilog.Debugf("Setting redis key %s", c.key(k))
 	return c.client.Set(c.key(k), buf.Bytes(), ttl).Err()
 }
+
+// SetNX sets a value if it doesn't exist
+func (c Client) SetNX(k string, v interface{}, ttl time.Duration) (bool, error) {
+	// Encode
+	buf := bytes.Buffer{}
+	err := gob.NewEncoder(&buf).Encode(v)
+	if err != nil {
+		return false, err
+	}
+
+	// Set
+	astilog.Debugf("Setting redis key %s if not exists", c.key(k))
+	return c.client.SetNX(c.key(k), buf.Bytes(), ttl).Result()
+}
