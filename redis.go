@@ -9,6 +9,9 @@ import (
 	"gopkg.in/redis.v5"
 )
 
+// Nil error
+var Nil = redis.Nil
+
 // Client represents a client
 type Client struct {
 	client *redis.Client
@@ -35,13 +38,13 @@ func (c Client) key(k string) string {
 
 // Del deletes a key
 func (c Client) Del(k string) error {
-	astilog.Debugf("Deleting redis key %s", c.key(k))
+	astilog.Debugf("astiredis: deleting redis key %s", c.key(k))
 	return c.client.Del(c.key(k)).Err()
 }
 
 // Get gets a value
 func (c Client) Get(k string, v interface{}) error {
-	astilog.Debugf("Getting redis key %s", c.key(k))
+	astilog.Debugf("astiredis: getting redis key %s", c.key(k))
 	b, err := c.client.Get(c.key(k)).Bytes()
 	if err != nil {
 		return err
@@ -61,7 +64,7 @@ func (c Client) Set(k string, v interface{}, ttl time.Duration) error {
 	}
 
 	// Set
-	astilog.Debugf("Setting redis key %s", c.key(k))
+	astilog.Debugf("astiredis: setting redis key %s", c.key(k))
 	return c.client.Set(c.key(k), buf.Bytes(), ttl).Err()
 }
 
@@ -75,6 +78,6 @@ func (c Client) SetNX(k string, v interface{}, ttl time.Duration) (bool, error) 
 	}
 
 	// Set
-	astilog.Debugf("Setting redis key %s if not exists", c.key(k))
+	astilog.Debugf("astiredis: setting redis key %s if not exists", c.key(k))
 	return c.client.SetNX(c.key(k), buf.Bytes(), ttl).Result()
 }
