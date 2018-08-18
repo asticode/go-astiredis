@@ -29,7 +29,7 @@ func New(c Configuration) *Client {
 }
 
 // key builds a key with the prefix
-func (c Client) key(k string) string {
+func (c *Client) key(k string) string {
 	if len(c.prefix) == 0 {
 		return k
 	}
@@ -37,13 +37,13 @@ func (c Client) key(k string) string {
 }
 
 // Del deletes a key
-func (c Client) Del(k string) error {
+func (c *Client) Del(k string) error {
 	astilog.Debugf("astiredis: deleting redis key %s", c.key(k))
 	return c.client.Del(c.key(k)).Err()
 }
 
 // Get gets a value
-func (c Client) Get(k string, v interface{}) error {
+func (c *Client) Get(k string, v interface{}) error {
 	astilog.Debugf("astiredis: getting redis key %s", c.key(k))
 	b, err := c.client.Get(c.key(k)).Bytes()
 	if err != nil {
@@ -55,7 +55,7 @@ func (c Client) Get(k string, v interface{}) error {
 }
 
 // Set sets a value
-func (c Client) Set(k string, v interface{}, ttl time.Duration) error {
+func (c *Client) Set(k string, v interface{}, ttl time.Duration) error {
 	// Encode
 	buf := bytes.Buffer{}
 	err := gob.NewEncoder(&buf).Encode(v)
@@ -69,7 +69,7 @@ func (c Client) Set(k string, v interface{}, ttl time.Duration) error {
 }
 
 // SetNX sets a value if it doesn't exist
-func (c Client) SetNX(k string, v interface{}, ttl time.Duration) (bool, error) {
+func (c *Client) SetNX(k string, v interface{}, ttl time.Duration) (bool, error) {
 	// Encode
 	buf := bytes.Buffer{}
 	err := gob.NewEncoder(&buf).Encode(v)
